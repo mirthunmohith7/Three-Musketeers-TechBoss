@@ -205,7 +205,7 @@ function CommandCenter() {
             <Leaderboard ranked={ranked} captainId={captainId} />
             <TaskTimer onEnd={() => say("TIME'S UP! Task window closed.", "Big Boss announces. Time is up. The task window is now closed.")} />
             <Announce onSend={(t) => { say(t); log(`📢 ${t}`); }} current={ann} volume={volume} setVolume={setVolume} muted={muted} setMuted={(m) => { setMuted(m); if (m) window.speechSynthesis?.cancel(); }} onReplay={() => { const l = lastSpoken.current || toVoice(ann); if (muted) return; speak(l); }} />
-            <section className="glass p-4">
+            <section className="glass plum-panel p-4">
               <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-bold tracking-widest text-neon-blue"><Activity className="h-4 w-4" /> ACTIVITY LOG</h2>
               <ul className="max-h-64 space-y-1 overflow-auto font-mono text-xs">
                 {logs.length === 0 && <li className="text-muted-foreground">Awaiting events…</li>}
@@ -379,8 +379,8 @@ function TaskTimer({ onEnd }: { onEnd: () => void }) {
 function Announce({ onSend, current, volume, setVolume, muted, setMuted, onReplay }: { onSend: (t: string) => void; current: string; volume: number; setVolume: (v: number) => void; muted: boolean; setMuted: (m: boolean) => void; onReplay: () => void }) {
   const [txt, setTxt] = useState("");
   return (
-    <section className="glass p-4">
-      <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-bold tracking-widest text-neon-red"><Megaphone className="h-4 w-4" /> BROADCAST</h2>
+    <section className="glass plum-panel p-4">
+      <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-bold tracking-widest text-neon-yellow"><Megaphone className="h-4 w-4" /> BROADCAST</h2>
       <div className="mb-3 rounded-md border border-neon-yellow/40 bg-secondary/60 p-2">
         <p className="font-mono text-[10px] tracking-widest text-neon-yellow">ON AIR</p>
         <p className="truncate text-sm">{current}</p>

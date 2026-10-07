@@ -32,36 +32,40 @@
   --color-neon-yellow: var(--neon-yellow);
   --color-neon-blue: var(--neon-blue);
   --color-neon-green: var(--neon-green);
-  --font-display: "Orbitron", sans-serif;
-  --font-sans: "Rajdhani", sans-serif;
-  --font-mono: "Share Tech Mono", monospace;
+  --color-plum: var(--plum);
+  --font-display: "Cinzel", serif;
+  --font-sans: "Cormorant Garamond", serif;
+  --font-mono: "IBM Plex Mono", monospace;
 }
 
 :root {
-  --radius: 0.5rem;
-  --background: #001329;
-  --foreground: #E0E0E0;
-  --card: color-mix(in oklab, #2B2B2B 60%, transparent);
-  --card-foreground: #E0E0E0;
-  --popover: #001F3F;
-  --popover-foreground: #E0E0E0;
-  --primary: #00FFFF;
-  --primary-foreground: #001329;
-  --secondary: #36454F;
-  --secondary-foreground: #E0E0E0;
-  --muted: #2B2B2B;
-  --muted-foreground: #C0C0C0;
-  --accent: #FFD700;
-  --accent-foreground: #001329;
-  --destructive: #DC143C;
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: color-mix(in oklab, #C0A040 35%, transparent);
-  --input: color-mix(in oklab, #C0C0C0 35%, transparent);
-  --ring: #00FFFF;
-  --neon-red: #DC143C;
-  --neon-yellow: #FFD700;
-  --neon-blue: #00FFFF;
-  --neon-green: #7DF9FF;
+  --radius: 0.375rem;
+  --background: #0B0C10;
+  --foreground: #F5F5DC;
+  --card: color-mix(in oklab, #2C3539 45%, transparent);
+  --card-foreground: #F5F5DC;
+  --popover: #121212;
+  --popover-foreground: #F5F5DC;
+  --primary: #CD7F32;
+  --primary-foreground: #0B0C10;
+  --secondary: #2C3539;
+  --secondary-foreground: #F5F5DC;
+  --muted: #3A4750;
+  --muted-foreground: #C9C5AE;
+  --accent: #A05822;
+  --accent-foreground: #FFFFF0;
+  --destructive: #B3203A;
+  --destructive-foreground: #FFFFF0;
+  --border: color-mix(in oklab, #8C6239 55%, transparent);
+  --input: color-mix(in oklab, #3A4750 90%, transparent);
+  --ring: #CD7F32;
+  --neon-red: #C8283F;
+  --neon-yellow: #CD7F32;
+  --neon-blue: #D9A066;
+  --neon-green: #43B3AE;
+  --plum: #4A0E2E;
+  --plum-deep: #3B112C;
+  --plum-light: #6B2D5C;
 }
 
 @layer base {
@@ -71,10 +75,10 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     background-image:
-      radial-gradient(ellipse at 10% 0%, color-mix(in oklab, #00FFFF 10%, transparent), transparent 50%),
-      radial-gradient(ellipse at 90% 100%, color-mix(in oklab, #DC143C 14%, transparent), transparent 50%),
-      linear-gradient(color-mix(in oklab, #C0C0C0 4%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklab, #C0C0C0 4%, transparent) 1px, transparent 1px);
+      radial-gradient(ellipse at 10% 0%, color-mix(in oklab, #CD7F32 8%, transparent), transparent 50%),
+      radial-gradient(ellipse at 90% 100%, color-mix(in oklab, #4A0E2E 30%, transparent), transparent 50%),
+      linear-gradient(color-mix(in oklab, #8C6239 4%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, #8C6239 4%, transparent) 1px, transparent 1px);
     background-size: auto, auto, 40px 40px, 40px 40px;
     background-attachment: fixed;
   }
@@ -85,14 +89,18 @@
   backdrop-filter: blur(14px);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: inset 0 1px 0 oklch(1 0 0 / 6%), 0 10px 40px -15px oklch(0 0 0 / 70%);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, #CD7F32 18%, transparent), 0 0 0 1px color-mix(in oklab, #43B3AE 8%, transparent), 0 10px 40px -15px oklch(0 0 0 / 70%);
 }
-@utility glow-blue { box-shadow: 0 0 18px -2px var(--neon-blue); }
+@utility glow-blue { box-shadow: 0 0 14px -4px var(--neon-blue); }
+@utility plum-panel {
+  background: linear-gradient(160deg, color-mix(in oklab, var(--plum-light) 45%, transparent), color-mix(in oklab, var(--plum-deep) 85%, transparent));
+  border-color: color-mix(in oklab, var(--plum-light) 80%, #CD7F32 20%);
+}
 @utility glow-red { box-shadow: 0 0 18px -2px var(--neon-red); }
 @utility glow-yellow { box-shadow: 0 0 22px -2px var(--neon-yellow); }
-@utility text-glow { text-shadow: 0 0 12px currentColor; }
+@utility text-glow { text-shadow: 0 0 8px color-mix(in oklab, currentColor 45%, transparent); }
 @utility hazard {
-  background: repeating-linear-gradient(45deg, var(--neon-red) 0 14px, #001329 14px 28px);
+  background: repeating-linear-gradient(45deg, var(--neon-red) 0 14px, #0B0C10 14px 28px);
 }
 @utility pulse-danger { animation: pulse-danger 0.8s ease-in-out infinite; }
 @utility ticker { animation: ticker 18s linear infinite; }
