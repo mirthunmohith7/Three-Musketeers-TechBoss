@@ -34,38 +34,44 @@
   --color-neon-green: var(--neon-green);
   --color-plum: var(--plum);
   --font-display: "Cinzel", serif;
-  --font-sans: "Cormorant Garamond", serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "Plus Jakarta Sans", sans-serif;
 }
 
 :root {
   --radius: 0.375rem;
   --background: #0B0C10;
-  --foreground: #F5F5DC;
-  --card: color-mix(in oklab, #2C3539 45%, transparent);
-  --card-foreground: #F5F5DC;
-  --popover: #121212;
-  --popover-foreground: #F5F5DC;
-  --primary: #CD7F32;
+  --foreground: #F2E8D5;
+  --parchment: #1A1412;
+  --leather: #261D1A;
+  --card: color-mix(in oklab, #261D1A 70%, transparent);
+  --card-foreground: #F2E8D5;
+  --popover: #1A1412;
+  --popover-foreground: #F2E8D5;
+  --primary: #DAA520;
   --primary-foreground: #0B0C10;
-  --secondary: #2C3539;
-  --secondary-foreground: #F5F5DC;
-  --muted: #3A4750;
-  --muted-foreground: #C9C5AE;
-  --accent: #A05822;
-  --accent-foreground: #FFFFF0;
-  --destructive: #B3203A;
-  --destructive-foreground: #FFFFF0;
-  --border: color-mix(in oklab, #8C6239 55%, transparent);
-  --input: color-mix(in oklab, #3A4750 90%, transparent);
-  --ring: #CD7F32;
-  --neon-red: #C8283F;
-  --neon-yellow: #CD7F32;
-  --neon-blue: #D9A066;
-  --neon-green: #43B3AE;
-  --plum: #4A0E2E;
-  --plum-deep: #3B112C;
-  --plum-light: #6B2D5C;
+  --secondary: #261D1A;
+  --secondary-foreground: #F2E8D5;
+  --muted: #1A1412;
+  --muted-foreground: #BFAF94;
+  --accent: #CD7F32;
+  --accent-foreground: #0B0C10;
+  --destructive: #B22222;
+  --destructive-foreground: #F2E8D5;
+  --border: color-mix(in oklab, #CD7F32 40%, transparent);
+  --input: color-mix(in oklab, #CD7F32 30%, transparent);
+  --ring: #DAA520;
+  --house-gryffindor: #800020;
+  --house-ravenclaw: #1A2B4C;
+  --house-slytherin: #1A472A;
+  --house-hufflepuff: #DAA520;
+  --neon-red: #B22222;
+  --neon-yellow: #DAA520;
+  --neon-blue: #6F8FD0;
+  --neon-green: #2E8B57;
+  --plum: #0E1A40;
+  --plum-deep: #0E1A40;
+  --plum-light: #1A2B4C;
 }
 
 @layer base {
@@ -75,8 +81,8 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     background-image:
-      radial-gradient(ellipse at 10% 0%, color-mix(in oklab, #CD7F32 8%, transparent), transparent 50%),
-      radial-gradient(ellipse at 90% 100%, color-mix(in oklab, #4A0E2E 30%, transparent), transparent 50%),
+      radial-gradient(ellipse at 10% 0%, color-mix(in oklab, #DAA520 7%, transparent), transparent 50%),
+      radial-gradient(ellipse at 90% 100%, color-mix(in oklab, #800020 22%, transparent), transparent 50%),
       linear-gradient(color-mix(in oklab, #8C6239 4%, transparent) 1px, transparent 1px),
       linear-gradient(90deg, color-mix(in oklab, #8C6239 4%, transparent) 1px, transparent 1px);
     background-size: auto, auto, 40px 40px, 40px 40px;
@@ -112,4 +118,22 @@
 @keyframes ticker {
   from { transform: translateX(100%); }
   to { transform: translateX(-100%); }
+}
+
+@utility crest-glow { filter: drop-shadow(0 0 10px color-mix(in oklab, #DAA520 55%, transparent)); }
+@utility scar-flash { animation: scar-flash 1s ease-out forwards; }
+@utility scar-bolt { animation: scar-bolt 1s ease-out forwards; filter: drop-shadow(0 0 18px #FFD700) drop-shadow(0 0 40px #E0E0E0); }
+@keyframes scar-flash {
+  0% { background: color-mix(in oklab, #FFD700 0%, transparent); }
+  10% { background: color-mix(in oklab, #FFD700 28%, transparent); }
+  25% { background: color-mix(in oklab, #E0E0E0 8%, transparent); }
+  40% { background: color-mix(in oklab, #FFD700 18%, transparent); }
+  100% { background: transparent; }
+}
+@keyframes scar-bolt {
+  0% { opacity: 0; transform: translate(-40vw, -10vh) scale(.6) rotate(-8deg); }
+  12% { opacity: 1; transform: translate(0, 0) scale(1.05) rotate(0); }
+  30% { opacity: .5; }
+  45% { opacity: 1; }
+  100% { opacity: 0; transform: translate(30vw, 6vh) scale(.9) rotate(6deg); }
 }
