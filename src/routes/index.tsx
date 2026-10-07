@@ -25,7 +25,7 @@ type TaskStatus = "In Progress" | "Completed" | "Failed";
 type Task = { id: number; title: string; desc: string; assignee: string; reward: number; status: TaskStatus };
 type Log = { id: number; text: string; delta: number; time: string };
 
-const TEAMS = ["Team Alpha", "Team Cyber", "Team Binary"];
+const TEAMS: [string, ...string[]] = ["Team Alpha", "Team Cyber", "Team Binary"];
 const PRESETS = ["Big Boss orders all contestants to assemble in the living area!", "Task failed! Penalties incoming.", "Eviction process starting. All nominees report to the stage.", "Lights out. All contestants to the bedroom."];
 const seed: [string, string, number][] = [
   ["Aarav Byte", "Team Alpha", 420], ["Nova Sharma", "Team Cyber", 380], ["Rhea Pixel", "Team Binary", 510],
@@ -87,7 +87,7 @@ function CommandCenter() {
 
   const saveContestant = () => {
     if (!editing?.name?.trim()) return;
-    if (editing.id) update(editing.id, { name: editing.name, team: editing.team, points: Number(editing.points) || 0 });
+    if (editing.id) update(editing.id, { name: editing.name, team: editing.team ?? TEAMS[0], points: Number(editing.points) || 0 });
     else setCs((p) => [...p, { id: nid(), name: editing.name!, team: editing.team || TEAMS[0], points: Number(editing.points) || 0, immune: false, nominated: false, evicted: false, hue: Math.floor(Math.random() * 360) }]);
     setEditing(null);
   };
