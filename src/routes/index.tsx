@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Crown, Shield, ShieldOff, AlertTriangle, Trophy, Users, Megaphone, Timer, Play, Pause,
-  RotateCcw, Plus, Pencil, Skull, CheckCircle2, XCircle, Activity, Radio, X, Target, Archive,
+  RotateCcw, Plus, Pencil, Skull, CheckCircle2, XCircle, Activity, Radio, X, Target, Archive, Volume2, VolumeX,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -28,10 +28,17 @@ type Log = { id: number; text: string; delta: number; time: string };
 const TEAMS: [string, ...string[]] = ["Team Alpha", "Team Cyber", "Team Binary"];
 const PRESETS = ["Big Boss orders all contestants to assemble in the living area!", "Task failed! Penalties incoming.", "Eviction process starting. All nominees report to the stage.", "Lights out. All contestants to the bedroom."];
 const seed: [string, string, number][] = [
-  ["Aarav Byte", "Team Alpha", 420], ["Nova Sharma", "Team Cyber", 380], ["Rhea Pixel", "Team Binary", 510],
-  ["Kabir Volt", "Team Alpha", 290], ["Zara Quantum", "Team Cyber", 460], ["Dev Kernel", "Team Binary", 340],
-  ["Isha Neon", "Team Alpha", 300], ["Leo Circuit", "Team Cyber", 250],
+  ["Aarav Sharma", "Team Alpha", 420], ["Priya Sharma", "Team Cyber", 380], ["Vivaan Kapoor", "Team Binary", 510],
+  ["Diya Iyer", "Team Alpha", 290], ["Ishaan Khan", "Team Cyber", 460], ["Ananya Reddy", "Team Binary", 340],
+  ["Arjun Patel", "Team Alpha", 300], ["Zara Sheikh", "Team Cyber", 250],
 ];
+function toVoice(t: string) {
+  const s = t.trim();
+  if (/^task failed/i.test(s)) return "Big Boss declares the current task FAILED. Penalties are incoming.";
+  if (/^big boss/i.test(s)) return s;
+  if (/new house captain/i.test(s)) return `Big Boss announces. ${s}`;
+  return `Attention, housemates. Big Boss announces. ${s}`;
+}
 const now = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 const initials = (n: string) => n.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
@@ -47,6 +54,23 @@ function CommandCenter() {
   const [ann, setAnn] = useState("Welcome to the Tech House. Big Boss is watching.");
   const [evictTarget, setEvictTarget] = useState<Contestant | null>(null);
   const [editing, setEditing] = useState<Partial<Contestant> | null>(null);
+  const [volume, setVolume] = useState(0.9);
+  const [muted, setMuted] = useState(false);
+  const lastSpoken = useRef("");
+  const speak = (line: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    lastSpoken.current = line;
+    if (muted) return;
+    const synth = window.speechSynthesis;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(line);
+    const voices = synth.getVoices();
+    const v = voices.find((x) => /en/i.test(x.lang) && /male|daniel|david|google uk english male|alex|fred/i.test(x.name)) ?? voices.find((x) => /en/i.test(x.lang));
+    if (v) u.voice = v;
+    u.pitch = 0.55; u.rate = 0.88; u.volume = volume;
+    synth.speak(u);
+  };
+  const say = (text: string, spoken?: string) => { setAnn(text); speak(spoken ?? toVoice(text)); };
   const idRef = useRef(100);
   const nid = () => ++idRef.current;
 
@@ -74,13 +98,13 @@ function CommandCenter() {
         setCs((p) => p.map((x) => (ids.includes(x.id) ? { ...x, points: x.points + t.reward } : x)));
         log(`${t.assignee} +${t.reward} each · ${t.title}`, t.reward);
       }
-    } else if (st === "Failed") { setAnn(`Task "${t.title}" failed!`); log(`Task failed: ${t.title}`); }
+    } else if (st === "Failed") { say(`Task "${t.title}" failed!`, `Big Boss declares the task, ${t.title}, FAILED. Penalties will follow.`); log(`Task failed: ${t.title}`); }
   };
 
   const evict = (c: Contestant) => {
     update(c.id, { evicted: true, nominated: false, immune: false });
     if (captainId === c.id) setCaptainId(null);
-    setAnn(`${c.name} has been EVICTED from the Tech House.`);
+    say(`${c.name} has been EVICTED from the Tech House.`, `Big Boss confirms. ${c.name}, you have been evicted from the Tech House. Please leave the house immediately.`);
     log(`${c.name} evicted`);
     setEvictTarget(null);
   };
@@ -156,7 +180,7 @@ function CommandCenter() {
                 <p className="font-mono text-xs tracking-widest text-neon-yellow">HOUSE CAPTAIN</p>
                 <p className="font-display text-2xl font-bold">{captain?.name ?? "VACANT"}</p>
               </div>
-              <select value={captainId ?? ""} onChange={(e) => { const id = Number(e.target.value); setCaptainId(id); update(id, { nominated: false }); const c = cs.find((x) => x.id === id); if (c) { setAnn(`${c.name} is the new House Captain!`); log(`Captaincy → ${c.name}`); } }}
+              <select value={captainId ?? ""} onChange={(e) => { const id = Number(e.target.value); setCaptainId(id); update(id, { nominated: false }); const c = cs.find((x) => x.id === id); if (c) { say(`${c.name} is the new House Captain!`); log(`Captaincy → ${c.name}`); } }}
                 className="rounded-md border border-neon-yellow/50 bg-secondary px-3 py-2 font-mono text-sm">
                 <option value="" disabled>Assign captain…</option>
                 {active.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -170,7 +194,7 @@ function CommandCenter() {
                 <button onClick={() => setEditing({ team: TEAMS[0], points: 0 })} className="flex items-center gap-1 rounded-md border border-neon-blue px-3 py-1.5 font-display text-xs text-neon-blue hover:bg-neon-blue/15"><Plus className="h-4 w-4" /> ADD</button>
               </div>
               <div className="grid gap-3 md:grid-cols-2">
-                {active.map((c) => <Card key={c.id} c={c} st={status(c)} onPts={addPoints} update={update} onEdit={() => setEditing(c)} onEvict={() => setEvictTarget(c)} onCaptain={() => { setCaptainId(c.id); update(c.id, { nominated: false }); log(`Captaincy → ${c.name}`); setAnn(`${c.name} is the new House Captain!`); }} />)}
+                {active.map((c) => <Card key={c.id} c={c} st={status(c)} onPts={addPoints} update={update} onEdit={() => setEditing(c)} onEvict={() => setEvictTarget(c)} onCaptain={() => { setCaptainId(c.id); update(c.id, { nominated: false }); log(`Captaincy → ${c.name}`); say(`${c.name} is the new House Captain!`); }} />)}
               </div>
             </section>
 
@@ -179,8 +203,8 @@ function CommandCenter() {
 
           <aside className="grid content-start gap-5">
             <Leaderboard ranked={ranked} captainId={captainId} />
-            <TaskTimer onEnd={() => setAnn("TIME'S UP! Task window closed.")} />
-            <Announce onSend={(t) => { setAnn(t); log(`📢 ${t}`); }} />
+            <TaskTimer onEnd={() => say("TIME'S UP! Task window closed.", "Big Boss announces. Time is up. The task window is now closed.")} />
+            <Announce onSend={(t) => { say(t); log(`📢 ${t}`); }} current={ann} volume={volume} setVolume={setVolume} muted={muted} setMuted={(m) => { setMuted(m); if (m) window.speechSynthesis?.cancel(); }} onReplay={() => { const l = lastSpoken.current || toVoice(ann); if (muted) return; speak(l); }} />
             <section className="glass p-4">
               <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-bold tracking-widest text-neon-blue"><Activity className="h-4 w-4" /> ACTIVITY LOG</h2>
               <ul className="max-h-64 space-y-1 overflow-auto font-mono text-xs">
@@ -352,11 +376,21 @@ function TaskTimer({ onEnd }: { onEnd: () => void }) {
   );
 }
 
-function Announce({ onSend }: { onSend: (t: string) => void }) {
+function Announce({ onSend, current, volume, setVolume, muted, setMuted, onReplay }: { onSend: (t: string) => void; current: string; volume: number; setVolume: (v: number) => void; muted: boolean; setMuted: (m: boolean) => void; onReplay: () => void }) {
   const [txt, setTxt] = useState("");
   return (
     <section className="glass p-4">
       <h2 className="mb-3 flex items-center gap-2 font-display text-sm font-bold tracking-widest text-neon-red"><Megaphone className="h-4 w-4" /> BROADCAST</h2>
+      <div className="mb-3 rounded-md border border-neon-yellow/40 bg-secondary/60 p-2">
+        <p className="font-mono text-[10px] tracking-widest text-neon-yellow">ON AIR</p>
+        <p className="truncate text-sm">{current}</p>
+        <div className="mt-2 flex items-center gap-2">
+          <button onClick={onReplay} disabled={muted} className="flex items-center gap-1 rounded border border-neon-blue px-2 py-1 font-mono text-[11px] text-neon-blue hover:bg-neon-blue/15 disabled:opacity-40"><RotateCcw className="h-3 w-3" />PLAY AGAIN</button>
+          <button onClick={() => setMuted(!muted)} aria-label={muted ? "Unmute voice" : "Mute voice"} className="rounded border border-border p-1 text-muted-foreground hover:text-foreground">{muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}</button>
+          <input type="range" min={0} max={1} step={0.05} value={volume} onChange={(e) => setVolume(Number(e.target.value))} aria-label="Voice volume" className="flex-1 accent-neon-blue" />
+          <span className="w-8 text-right font-mono text-[10px] text-muted-foreground">{Math.round(volume * 100)}%</span>
+        </div>
+      </div>
       <div className="grid gap-1">
         {PRESETS.map((p) => <button key={p} onClick={() => onSend(p)} className="rounded border border-neon-red/30 px-2 py-1.5 text-left text-sm hover:bg-neon-red/10">{p}</button>)}
       </div>
