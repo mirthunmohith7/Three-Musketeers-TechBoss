@@ -369,7 +369,7 @@ function Announce({ onSend }: { onSend: (t: string) => void }) {
 }
 
 function Tasks({ tasks, setTasks, active, onStatus, nid }: { tasks: Task[]; setTasks: React.Dispatch<React.SetStateAction<Task[]>>; active: Contestant[]; onStatus: (t: Task, s: TaskStatus) => void; nid: () => number }) {
-  const [f, setF] = useState({ title: "", desc: "", assignee: TEAMS[0], reward: 50 });
+  const [f, setF] = useState({ title: "", desc: "", assignee: TEAMS[0] as string, reward: 50 });
   const label = (a: string) => (a.startsWith("c:") ? active.find((c) => c.id === Number(a.slice(2)))?.name ?? "Evicted" : a);
   const st: Record<TaskStatus, string> = { "In Progress": "border-neon-blue text-neon-blue", Completed: "border-neon-green text-neon-green", Failed: "border-neon-red text-neon-red" };
   return (
